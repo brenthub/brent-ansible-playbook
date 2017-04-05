@@ -1,0 +1,10 @@
+---
+# This playbook deploys zabbix server
+
+- hosts: zabbix-server
+  remote_user: root
+  become: yes
+  become_method: su
+
+  roles:
+    - server-install

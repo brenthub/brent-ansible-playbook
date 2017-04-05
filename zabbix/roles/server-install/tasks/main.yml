@@ -1,0 +1,13 @@
+---
+- name: download zabbix server tar
+  command: wget https://jaist.dl.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/3.2.4/zabbix-3.2.4.tar.gz
+  args:
+    chdir: /tmp
+    creates: /tmp/zabbix-3.2.4.tar.gz
+  tags: install
+
+- name: unarchive file
+  unarchive: src=/tmp/zabbix-3.2.4.tar.gz dest={{install_dir}} remote_src=yes owner={{deploy_user}} group={{deploy_user}} mode=0755
+  args:
+    creates: "{{install_dir}}/zabbix-3.2.4"
+  tags: install
