@@ -1,0 +1,15 @@
+#!/bin/bash
+#chkconfig:2345 20 90
+#description:zookeeper
+#processname:zookeeper
+
+ZK_HOME={{install_dir}}/zookeeper-3.4.9
+ZK_USER={{deploy_user}}
+
+case $1 in
+         start) su ${ZK_USER} ${ZK_HOME}/bin/zkServer.sh start;;
+         stop) su ${ZK_USER} ${ZK_HOME}/bin/zkServer.sh stop;;
+         status) su ${ZK_USER} ${ZK_HOME}/bin/zkServer.sh status;;
+         restart) su ${ZK_USER} ${ZK_HOME}/bin/zkServer.sh restart;;
+         *)  echo "requirestart|stop|status|restart"  ;;
+esac

@@ -1,21 +1,54 @@
 ---
 
 - name: yum install other tools
-  yum:
-    list: wget mysql-dev gcc net-snmp-devel curl-devel perl-DBI php-gd php-mysql php-bcmath php-mbstring php-xm
+  shell: yum -y install wget mysql-devel libxml2 libxml2-devel gcc net-snmp-devel curl-devel perl-DBI php-gd php-mysql php-bcmath php-mbstring php-xm
   tags: preinstall
 
 - name: get is unarchive
   shell: ls -l zabbix-3.2.4
   args:
-    chdir: "{{install_dir}}"
-  register: result
+    chdir: "/tmp"
+  register: is_unarchive
   ignore_errors: True
   tags: install
 
-- debug: result
+- name: debug is_unarchive
+  debug:
+    var: is_unarchive
 
 - name: unarchive file
-  unarchive: src=roles/server-install/zabbix-3.2.4.tar.gz dest={{install_dir}}  owner={{deploy_user}} group={{deploy_user}} mode=0755
-  when:  result.rc == 2
+  unarchive: src=roles/server-install/files/zabbix-3.2.4.tar.gz dest=/tmp copy=yes mode=0755
+  when:  is_unarchive.rc == 2
+  become_user : "{{deploy_user}}"
+  tags: install
+
+- name: get is unarchive
+  shell: ls -l zabbix
+  args:
+    chdir: "/tools"
+  register: is_zabbix_install
+  ignore_errors: True
+  tags: install
+
+- name: configure sources
+  shell: ./configure --prefix=/tools/zabbix --enable-server --enable-agent --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --with-libxml2
+  args:
+    chdir: "/tmp/zabbix-3.2.4"
+  when: is_zabbix_install.rc == 2
+  become_user : "{{deploy_user}}"
+  tags: install
+
+- name: compile
+  make:
+    chdir: "/tmp/zabbix-3.2.4"
+  become_user : "{{deploy_user}}"
+  when: is_zabbix_install.rc == 2
+  tags: install
+
+- name: compile and install
+  make:
+    chdir: "/tmp/zabbix-3.2.4"
+    target: install
+  become_user : "{{deploy_user}}"
+  when: is_zabbix_install.rc == 2
   tags: install

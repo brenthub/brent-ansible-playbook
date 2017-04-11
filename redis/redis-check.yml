@@ -1,0 +1,10 @@
+---
+# This playbook verify redis.
+
+- hosts: redis-servers
+  remote_user: root
+  become: yes
+  become_method: su
+
+  roles:
+    - verify-redis

@@ -1,0 +1,36 @@
+---
+- name: unarchive zk file
+  unarchive: src=roles/install-zk/files/zookeeper-3.4.9.tar.gz dest={{install_dir}} copy=yes owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: install
+
+- name: creage data dir
+  file: path={{data_dir}} state=directory  owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: install
+
+- name: Overwrite myid file.
+  template: src=myid.j2 dest={{data_dir}}/myid owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: Overwrite default config file
+  template: src=zoo.cfg.j2 dest={{install_dir}}/zookeeper-3.4.9/conf/zoo.cfg owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: Overwrite default config file
+  template: src=log4j.properties.j2 dest={{install_dir}}/zookeeper-3.4.9/conf/log4j.properties owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: Overwrite zkEnv config file
+  template: src=zkEnv.sh.j2 dest={{install_dir}}/zookeeper-3.4.9/bin/zkEnv.sh mode=0755 owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: config start service config
+  template: src=zookeeper.inid.j2 dest=/etc/init.d/zookeeper mode=0755 owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: add zookeeper is service
+  shell: chkconfig --add /etc/init.d/zookeeper
+  tags: config
+
+- name: restart zookeeper
+  service: name=zookeeper state=restarted enabled=yes
+  tags: restart

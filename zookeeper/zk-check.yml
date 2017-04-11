@@ -1,0 +1,24 @@
+---
+# This playbook check zookeeper cluster info
+
+- hosts: zk-servers
+  remote_user: root
+  #become: yes
+  #become_method: su
+
+  tasks:
+    - name: ruok command
+      shell: "echo ruok | nc {{inventory_hostname}} {{client_port}}"
+      register: ruok_out
+
+    - name: srvr command
+      shell: "echo srvr | nc {{inventory_hostname}} {{client_port}} | grep Mode"
+      register: srvr_out
+
+    - name: conf command
+      shell: "echo conf | nc {{inventory_hostname}} {{client_port}} | grep serverId"
+      register: conf_out
+
+    - name: echo result
+      debug:
+        msg: "{{group_names}} {{conf_out.stdout}} {{ruok_out.stdout}} {{srvr_out.stdout[5:]}}"

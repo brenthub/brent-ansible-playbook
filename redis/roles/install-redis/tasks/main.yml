@@ -1,0 +1,52 @@
+---
+- name: unarchive redis file
+  unarchive: src=roles/install-redis/files/redis-3.2.7.tar.gz dest={{install_dir}} copy=yes owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: install
+
+- name: creage data dir
+  file: path={{data_dir}} state=directory  owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: install
+
+- name: compile redis
+  make:
+    chdir: "{{install_dir}}/redis-3.2.7"
+  become_user : "{{deploy_user}}"
+  tags: install
+
+- name: compile redis and install
+  make:
+    chdir: "{{install_dir}}/redis-3.2.7"
+    params:
+      PREFIX: "{{install_dir}}/redis-3.2.7"
+    target: install
+  become_user : "{{deploy_user}}"
+  tags: install
+
+- name: copy redis-trib.rb to /usr/bin
+  copy: src={{install_dir}}/redis-3.2.7/src/redis-trib.rb dest={{install_dir}}/redis-3.2.7/bin remote_src=true owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: install
+
+- name: copy redis-gem
+  copy: src=roles/install-redis/files/redis-3.2.1.gem dest={{install_dir}} owner={{deploy_user}} group={{deploy_user}}
+  tags: install
+
+- name: install redis-gem
+  shell: gem install {{install_dir}}/redis-3.2.1.gem --local --no-rdoc --no-ri
+  become_user : "{{deploy_user}}"
+  tags: install
+
+- name: Overwrite default config file
+  template: src=redis.conf.j2 dest={{data_dir}}/redis.conf owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: config start service config
+  template: src=redis.inid.j2 dest=/etc/init.d/redis mode=0755 owner={{deploy_user}} group={{deploy_user}}
+  tags: config
+
+- name: add redis is service
+  shell: chkconfig --add /etc/init.d/redis
+  tags: config
+
+- name: restart redis
+  service: name=redis state=restarted enabled=yes
+  tags: restart

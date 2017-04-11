@@ -1,0 +1,32 @@
+---
+- name: exec shell
+  shell: "{{install_dir}}/redis-3.2.7/src/redis-trib.rb check {{ item }} | grep M | awk '{print $3}'"
+  become_user: "{{deploy_user}}"
+  with_items:
+  - "{{ inventory_hostname }}:{{ redis_port }}"
+  register: masterResult
+
+- name: exec shell
+  shell: /tools/redis-3.2.7/src/redis-trib.rb check {{ item }} | grep S | awk '{print $3}'
+  become_user: "{{deploy_user}}"
+  with_items:
+  - "{{ inventory_hostname }}:{{ redis_port }}"
+  register: slaveResult
+
+- name: exec shell
+  shell: /tools/redis-3.2.7/src/redis-trib.rb check {{ item }} | grep M | awk 'END{print NR}'
+  become_user: "{{deploy_user}}"
+  with_items:
+  - "{{ inventory_hostname }}:{{ redis_port }}"
+  register: masterNum
+
+- name: exec shell
+  shell: /tools/redis-3.2.7/src/redis-trib.rb check {{ item }} | grep S | awk 'END{print NR}'
+  become_user: "{{deploy_user}}"
+  with_items:
+  - "{{ inventory_hostname }}:{{ redis_port }}"
+  register: slaveNum
+
+- name: validate the master var
+  debug:
+    msg: 'master{{ masterResult.results[0].stdout_lines }} slave{{ masterResult.results[0].stdout_lines }} master={{ masterNum.results[0].stdout_lines}} slave={{ slaveNum.results[0].stdout_lines}}'

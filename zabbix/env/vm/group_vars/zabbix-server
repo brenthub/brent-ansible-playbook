@@ -1,4 +1,4 @@
-deploy_user: epcc
+deploy_user: deploy
 
 java_home: /tools/java
 install_dir: /tools

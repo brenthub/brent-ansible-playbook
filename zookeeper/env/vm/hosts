@@ -1,0 +1,17 @@
+[zk-servers:children]
+zk-cluster-control1
+zk-cluster-handle1
+
+[zk-cluster-control1]
+10.16.19.1 myid=1
+10.16.19.2 myid=2
+10.16.19.3 myid=3
+
+[zk-cluster-handle1]
+10.16.19.14 myid=1
+10.16.19.15 myid=2
+10.16.19.16 myid=3
+10.16.19.17 myid=4
+10.16.19.18 myid=5
+10.16.19.19 myid=6
+10.16.19.20 myid=7

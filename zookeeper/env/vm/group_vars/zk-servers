@@ -1,0 +1,13 @@
+deploy_user: nucc
+
+java_home: /tools/java
+
+install_dir: /tools
+client_port: 2181
+data_dir: /data/zookeeper/data
+log_dir: /data/zookeeper/logs
+tick_time: 2000
+init_limit: 10
+sync_limit: 5
+
+jmx_port: 8866

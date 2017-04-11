@@ -1,0 +1,10 @@
+---
+# This playbook deploys a simple zookeeper.
+
+- hosts: zk-servers
+  remote_user: root
+  become: yes
+  become_method: su
+
+  roles:
+    - install-zk

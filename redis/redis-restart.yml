@@ -1,0 +1,11 @@
+---
+# This playbook restart redis.
+
+- hosts: redis-servers
+  remote_user: root
+  become: yes
+  become_method: su
+
+  tasks:
+    - name: restart redis
+      service: name=redis state=restarted enabled=yes

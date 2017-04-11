@@ -1,0 +1,11 @@
+---
+# This playbook restart zookeeper.
+
+- hosts: zk-servers
+  remote_user: root
+  become: yes
+  become_method: su
+
+  tasks:
+    - name: restart zookeeper
+      service: name=zookeeper state=restarted enabled=yes
