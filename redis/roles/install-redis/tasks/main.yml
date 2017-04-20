@@ -1,4 +1,9 @@
 ---
+
+- name: yum install other tools
+  shell: yum -y install gcc rubygems rpm-build
+  tags: preinstall
+
 - name: unarchive redis file
   unarchive: src=roles/install-redis/files/redis-3.2.7.tar.gz dest={{install_dir}} copy=yes owner={{deploy_user}} group={{deploy_user}} mode=0755
   tags: install
@@ -7,9 +12,15 @@
   file: path={{data_dir}} state=directory  owner={{deploy_user}} group={{deploy_user}} mode=0755
   tags: install
 
+- name: creage logs file
+  file: path={{log_file}} owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: install
+
 - name: compile redis
   make:
     chdir: "{{install_dir}}/redis-3.2.7"
+    params:
+      MALLOC: libc
   become_user : "{{deploy_user}}"
   tags: install
 
