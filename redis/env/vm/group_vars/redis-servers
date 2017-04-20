@@ -3,5 +3,3 @@ deploy_user: deploy
 install_dir: /tools
 data_dir: /data/redis
 log_file: /data/logs/redis
-
-redis_port: 6379

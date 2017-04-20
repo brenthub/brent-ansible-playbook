@@ -39,11 +39,11 @@
   tags: install
 
 - name: creage data dir
-  file: path={{data_dir}}_{{redis_port}} state=directory  owner={{deploy_user}} group={{deploy_user}} mode=0755
+  file: path={{data_dir}}_{{redis_port}} state=directory  owner={{deploy_user}} group={{deploy_user}} 
   tags: config
 
 - name: creage logs file
-  file: path={{log_file}}_{{redis_port}} owner={{deploy_user}} group={{deploy_user}} mode=0755
+  file: path={{log_file}}_{{redis_port}} state=touch owner={{deploy_user}} group={{deploy_user}}
   tags: config
 
 - name: Overwrite default config file

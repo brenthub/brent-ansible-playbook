@@ -1,6 +1,6 @@
 [redis-servers:children]
 redis-g1
-redis-g2
+# redis-g2
 
 [redis-g1]
 192.168.80.12
@@ -9,6 +9,9 @@ redis-g2
 [redis-g2]
 192.168.80.12
 192.168.80.13
+
+[redis-g1:vars]
+redis_port=6379
 
 [redis-g2:vars]
 redis_port=6389
