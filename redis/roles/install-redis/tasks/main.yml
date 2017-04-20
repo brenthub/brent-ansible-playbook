@@ -8,14 +8,6 @@
   unarchive: src=roles/install-redis/files/redis-3.2.7.tar.gz dest={{install_dir}} copy=yes owner={{deploy_user}} group={{deploy_user}} mode=0755
   tags: install
 
-- name: creage data dir
-  file: path={{data_dir}} state=directory  owner={{deploy_user}} group={{deploy_user}} mode=0755
-  tags: install
-
-- name: creage logs file
-  file: path={{log_file}} owner={{deploy_user}} group={{deploy_user}} mode=0755
-  tags: install
-
 - name: compile redis
   make:
     chdir: "{{install_dir}}/redis-3.2.7"
@@ -46,18 +38,26 @@
   become_user : "{{deploy_user}}"
   tags: install
 
+- name: creage data dir
+  file: path={{data_dir}}_{{redis_port}} state=directory  owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: config
+
+- name: creage logs file
+  file: path={{log_file}}.{{redis_port}} owner={{deploy_user}} group={{deploy_user}} mode=0755
+  tags: config
+
 - name: Overwrite default config file
-  template: src=redis.conf.j2 dest={{data_dir}}/redis.conf owner={{deploy_user}} group={{deploy_user}}
+  template: src=redis.conf.j2 dest={{data_dir}}_{{redis_port}}/redis.conf owner={{deploy_user}} group={{deploy_user}}
   tags: config
 
 - name: config start service config
-  template: src=redis.inid.j2 dest=/etc/init.d/redis mode=0755 owner={{deploy_user}} group={{deploy_user}}
+  template: src=redis.inid.j2 dest=/etc/init.d/redis_{{redis_port}} mode=0755 owner={{deploy_user}} group={{deploy_user}}
   tags: config
 
 - name: add redis is service
-  shell: chkconfig --add /etc/init.d/redis
+  shell: chkconfig --add /etc/init.d/redis_{{redis_port}}
   tags: config
 
 - name: restart redis
-  service: name=redis state=restarted enabled=yes
+  service: name=redis_{{redis_port}} state=restarted enabled=yes
   tags: restart

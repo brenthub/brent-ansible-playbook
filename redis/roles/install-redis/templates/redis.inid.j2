@@ -8,8 +8,8 @@ EXEC={{install_dir}}/redis-3.2.7/bin/redis-server
 CLIEXEC={{install_dir}}/redis-3.2.7/bin/redis-cli
 DEPLOYUSER={{deploy_user}}
 
-PIDFILE={{data_dir}}/redis_{{redis_port}}.pid
-CONF="{{data_dir}}/redis.conf"
+PIDFILE={{data_dir}}_{{redis_port}}/redis_{{redis_port}}.pid
+CONF="{{data_dir}}_{{redis_port}}/redis.conf"
 
 case "$1" in
     start)
