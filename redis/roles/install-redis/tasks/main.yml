@@ -43,7 +43,7 @@
   tags: config
 
 - name: creage logs file
-  file: path={{log_file}}.{{redis_port}} owner={{deploy_user}} group={{deploy_user}} mode=0755
+  file: path={{log_file}}_{{redis_port}} owner={{deploy_user}} group={{deploy_user}} mode=0755
   tags: config
 
 - name: Overwrite default config file
