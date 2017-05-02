@@ -1,0 +1,25 @@
+---
+# This playbook init rsa pubkey.
+
+- hosts: all
+  remote_user: deploy
+
+  tasks:
+    - name: get file exist
+      shell: ls -l /home/deploy/.ssh/authorized_keys
+      register: is_exist
+      ignore_errors: True
+
+    - name: create .ssh dic
+      file: path="/home/deploy/.ssh" state=directory mode=700
+      when:  is_exist.rc == 2
+
+    - name: create file
+      file: path="/home/deploy/.ssh/authorized_keys" state=touch
+      when:  is_exist.rc == 2
+
+    - name: change mode
+      file: dest=/home/deploy/.ssh/authorized_keys mode=600
+
+    - name: init rsa pub
+      shell: echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+gO5tzhTyQzUoehVlgW/SLGs0wxzXpAGJZoV/w/J05uohv7sjPPqFY1dJW21p0ITFIuYUsOYXqzwEFwjGIlv8T5sYOnaSIhjQPBWEaxMOPmfuvROnYpy3yAJFUm3L9iV2wA2TVweFYo80xbx2W/NcEDidLYLeGGN/3IMHqSse4MzDwmjiL8uo0XbQGNCV9bJ08eIOnWDyDkU/rG9Rv4rvNE8fRq7lzCC+Cti0dVDPCPOlNNfkIyUaDAW+X3pnO+mfj/kr/+UclDEaVeS3tPn4WXMn0/XXWZXI5Zvjx7ufGEWqOo5xmPRIamPvd78u9ZvaxUuEH/GWTigmtfJVIf+h ansible@centos7-temp" >> /home/deploy/.ssh/authorized_keys
